@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Accounting App</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="app">
+    <header class="header">
+      <h1>記帳 App</h1>
+      <p class="sub">收入/支出快速記錄，並自動統計本月結餘</p>
+    </header>
+
+    <section class="summary" aria-label="summary">
+      <div class="card">
+        <div class="label">本月收入</div>
+        <div class="value" id="sumIncome">0</div>
+      </div>
+      <div class="card">
+        <div class="label">本月支出</div>
+        <div class="value" id="sumExpense">0</div>
+      </div>
+      <div class="card">
+        <div class="label">本月結餘</div>
+        <div class="value" id="sumBalance">0</div>
+      </div>
+    </section>
+
+    <section class="panel" aria-label="new-record">
+      <h2>新增一筆</h2>
+
+      <form id="recordForm" class="form">
+        <label class="field">
+          <span class="field-label">日期</span>
+          <input type="date" id="dateInput" required />
+        </label>
+
+        <label class="field">
+          <span class="field-label">類型</span>
+          <select id="typeInput" required>
+            <option value="expense" selected>支出</option>
+            <option value="income">收入</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="field-label">類別</span>
+          <select id="categoryInput" required>
+            <option value="food" selected>餐飲</option>
+            <option value="traffic">交通</option>
+            <option value="shopping">購物</option>
+            <option value="rent">房租</option>
+            <option value="medical">醫療</option>
+            <option value="salary">薪資</option>
+            <option value="bonus">獎金</option>
+            <option value="other">其他</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span class="field-label">金額</span>
+          <input type="number" id="amountInput" min="1" step="1" placeholder="例如：120" required />
+        </label>
+
+        <label class="field field-full">
+          <span class="field-label">備註</span>
+          <input type="text" id="noteInput" maxlength="30" placeholder="例如：午餐" />
+        </label>
+
+        <button type="submit" class="btn">新增</button>
+      </form>
+    </section>
+
+    <section class="panel" aria-label="records">
+      <div class="panel-head">
+        <h2>紀錄</h2>
+        <button type="button" class="btn btn-ghost" id="clearAllBtn">清空全部</button>
+      </div>
+
+      <ul id="recordList" class="list"></ul>
+
+      <template id="recordItemTpl">
+        <li class="item">
+          <div class="item-main">
+            <div class="item-title">
+              <span class="badge" data-role="typeBadge">支出</span>
+              <span data-role="categoryText">餐飲</span>
+              <span class="date" data-role="dateText">2026-01-01</span>
+            </div>
+            <div class="item-note" data-role="noteText"></div>
+          </div>
+
+          <div class="item-right">
+            <div class="money" data-role="amountText">-120</div>
+            <button type="button" class="btn btn-danger" data-role="deleteBtn">刪除</button>
+          </div>
+        </li>
+      </template>
+    </section>
+  </div>
+
+  <script src="./app.js"></script>
+</body>
+</html>
