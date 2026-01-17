@@ -161,3 +161,31 @@ select {
   color: #888;
   font-size: 12px;
 }
+/* ===== Filters ===== */
+.filters {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+  align-items: end;
+}
+
+#resetFilterBtn {
+  height: 40px;
+  align-self: end;
+}
+
+@media (max-width: 820px) {
+  .summary {
+    grid-template-columns: 1fr;
+  }
+  .form {
+    grid-template-columns: 1fr;
+  }
+  .field-full {
+    grid-column: span 1;
+  }
+  .filters {
+    grid-template-columns: 1fr;
+  }
+}

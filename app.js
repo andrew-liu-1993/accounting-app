@@ -21,6 +21,12 @@ const recordList = document.querySelector("#recordList");
 const recordItemTpl = document.querySelector("#recordItemTpl");
 
 const clearAllBtn = document.querySelector("#clearAllBtn");
+const monthFilter = document.querySelector("#monthFilter");
+const typeFilter = document.querySelector("#typeFilter");
+const categoryFilter = document.querySelector("#categoryFilter");
+const qFilter = document.querySelector("#qFilter");
+const resetFilterBtn = document.querySelector("#resetFilterBtn");
+
 
 // ---------- Config ----------
 const STORAGE_KEY = "accounting_records_v0";
@@ -40,7 +46,14 @@ const CATEGORY_LABEL = {
 // ---------- State ----------
 const state = {
   records: loadRecords(),
+  filters: {
+    month: "",       // "YYYY-MM"
+    type: "all",     // all | income | expense
+    category: "all", // all | food | ...
+    q: "",           // keyword
+  },
 };
+
 
 // ---------- Utils ----------
 function todayISO() {
@@ -101,6 +114,36 @@ function saveRecords(records) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(records));
 }
 
+function getFilteredRecords() {
+  const { month, type, category, q } = state.filters;
+  const keyword = (q || "").trim().toLowerCase();
+
+  return state.records.filter((r) => {
+    if (month) {
+      if (!r.date.startsWith(month)) return false; // YYYY-MM
+    }
+    if (type !== "all") {
+      if (r.type !== type) return false;
+    }
+    if (category !== "all") {
+      if (r.category !== category) return false;
+    }
+    if (keyword) {
+      const catLabel = (CATEGORY_LABEL[r.category] || r.category).toLowerCase();
+      const note = (r.note || "").toLowerCase();
+      if (!catLabel.includes(keyword) && !note.includes(keyword)) return false;
+    }
+    return true;
+  });
+}
+
+function syncFilterUIFromState() {
+  monthFilter.value = state.filters.month;
+  typeFilter.value = state.filters.type;
+  categoryFilter.value = state.filters.category;
+  qFilter.value = state.filters.q;
+}
+
 // ---------- Core: Render ----------
 function render() {
   renderSummary();
@@ -132,7 +175,8 @@ function renderList() {
   recordList.innerHTML = "";
 
   // 最新在上面：依 date 倒序，再依 createdAt 倒序
-  const sorted = [...state.records].sort((a, b) => {
+  const filtered = getFilteredRecords();
+  const sorted = [...filtered].sort((a, b) => {
     if (a.date !== b.date) return a.date < b.date ? 1 : -1;
     return (b.createdAt || 0) - (a.createdAt || 0);
   });
@@ -196,9 +240,15 @@ function clearAll() {
 
 // ---------- Events ----------
 function initDefaults() {
-  // 預設日期設為今天，減少輸入成本
   dateInput.value = todayISO();
+
+  const d = new Date();
+  const yyyy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  state.filters.month = `${yyyy}-${mm}`;
+  syncFilterUIFromState();
 }
+
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -240,6 +290,32 @@ clearAllBtn.addEventListener("click", () => {
   if (!ok) return;
   clearAll();
 });
+monthFilter.addEventListener("change", () => {
+  state.filters.month = monthFilter.value;
+  render();
+});
+
+typeFilter.addEventListener("change", () => {
+  state.filters.type = typeFilter.value;
+  render();
+});
+
+categoryFilter.addEventListener("change", () => {
+  state.filters.category = categoryFilter.value;
+  render();
+});
+
+qFilter.addEventListener("input", () => {
+  state.filters.q = qFilter.value;
+  render();
+});
+
+resetFilterBtn.addEventListener("click", () => {
+  state.filters = { month: "", type: "all", category: "all", q: "" };
+  syncFilterUIFromState();
+  render();
+});
+
 
 // ---------- Boot ----------
 initDefaults();

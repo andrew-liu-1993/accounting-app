@@ -79,6 +79,45 @@
         <button type="button" class="btn btn-ghost" id="clearAllBtn">清空全部</button>
       </div>
 
+      <div class="filters" aria-label="filters">
+        <label class="field">
+        <span class="field-label">月份</span>
+        <input type="month" id="monthFilter" />
+        </label>
+
+        <label class="field">
+        <span class="field-label">類型</span>
+        <select id="typeFilter">
+      <option value="all" selected>全部</option>
+      <option value="expense">支出</option>
+      <option value="income">收入</option>
+        </select>
+        </label>
+
+        <label class="field">
+        <span class="field-label">類別</span>
+        <select id="categoryFilter">
+      <option value="all" selected>全部</option>
+      <option value="food">餐飲</option>
+      <option value="traffic">交通</option>
+      <option value="shopping">購物</option>
+      <option value="rent">房租</option>
+      <option value="medical">醫療</option>
+      <option value="salary">薪資</option>
+      <option value="bonus">獎金</option>
+      <option value="other">其他</option>
+        </select>
+        </label>
+
+        <label class="field">
+        <span class="field-label">搜尋</span>
+        <input type="text" id="qFilter" placeholder="搜尋備註/類別" />
+        </label>
+
+        <button type="button" class="btn btn-ghost" id="resetFilterBtn">重設</button>
+        </div>
+
+
       <ul id="recordList" class="list"></ul>
 
       <template id="recordItemTpl">
