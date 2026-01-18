@@ -2,7 +2,7 @@
 
 A vanilla JavaScript accounting app built with **state-driven rendering** and **incremental feature design**.
 
-This project focuses on building a maintainable front-end architecture rather than visual complexity.
+**Live Demo:** https://andrew-liu-1993.github.io/accounting-app/
 
 ---
 
@@ -28,11 +28,11 @@ This project focuses on building a maintainable front-end architecture rather th
 ## 🧠 Design Principles
 
 - **Single Source of Truth**
-  - All records stored in `state.records`
+  - All records are stored in `state.records`
 - **State-driven Rendering**
-  - UI is fully derived from state
+  - UI is fully derived from state (list and summary)
 - **Incremental Iteration**
-  - Features added without breaking existing logic
+  - Features are added without breaking existing logic
 
 ---
 
@@ -46,20 +46,18 @@ This project focuses on building a maintainable front-end architecture rather th
 
 ---
 
-## 📷 Screenshots
-
-### Main
-![Main](assets/screenshot-main.png)
-
-### Filters
-![Filters](assets/screenshot-filter.png)
-
-
 ## 🚀 How to Run Locally
 
 1. Clone the repository
    ```bash
    git clone https://github.com/andrew-liu-1993/accounting-app.git
 
-**Live Demo:** https://andrew-liu-1993.github.io/accounting-app/
+---
 
+## 📌 Future Improvements
+
+- Edit existing records
+- Export data as CSV
+- Monthly charts and trends
+- Category management
+- Refactor to modular structure
