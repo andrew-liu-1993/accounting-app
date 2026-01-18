@@ -151,15 +151,13 @@ function render() {
 }
 
 function renderSummary() {
-  const now = new Date();
-  const yyyy = now.getFullYear();
-  const mm = now.getMonth() + 1;
+  // V2: summary should follow current filters (same as the list)
+  const filtered = getFilteredRecords();
 
   let income = 0;
   let expense = 0;
 
-  for (const r of state.records) {
-    if (!sameMonth(r.date, yyyy, mm)) continue;
+  for (const r of filtered) {
     if (r.type === "income") income += r.amount;
     if (r.type === "expense") expense += r.amount;
   }
@@ -170,6 +168,7 @@ function renderSummary() {
   sumExpenseEl.textContent = formatMoney(expense);
   sumBalanceEl.textContent = formatMoney(balance);
 }
+
 
 function renderList() {
   recordList.innerHTML = "";
