@@ -46,8 +46,20 @@ This project focuses on building a maintainable front-end architecture rather th
 
 ---
 
+## 📷 Screenshots
+
+### Main
+![Main](assets/screenshot-main.png)
+
+### Filters
+![Filters](assets/screenshot-filter.png)
+
+
 ## 🚀 How to Run Locally
 
 1. Clone the repository
    ```bash
    git clone https://github.com/andrew-liu-1993/accounting-app.git
+
+**Live Demo:** https://andrew-liu-1993.github.io/accounting-app/
+
