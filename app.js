@@ -52,6 +52,7 @@ const state = {
     category: "all", // all | food | ...
     q: "",           // keyword
   },
+  editingId: null, // ✅ 目前正在編輯的那筆 id；沒在編輯就是 null
 };
 
 
@@ -84,6 +85,21 @@ function sameMonth(dateStr, yyyy, mm) {
   if (!isValidISODate(dateStr)) return false;
   const [y, m] = dateStr.split("-").map((x) => Number(x));
   return y === yyyy && m === mm;
+}
+
+function setFormValuesFromRecord(r) {
+  dateInput.value = r.date;
+  typeInput.value = r.type;
+  categoryInput.value = r.category;
+  amountInput.value = String(r.amount);
+  noteInput.value = r.note || "";
+}
+
+function enterEditMode(r) {
+  state.editingId = r.id;          // ✅ 設定 editingId（進入編輯狀態）
+  setFormValuesFromRecord(r);      // ✅ 把資料填回表單
+  form.querySelector('button[type="submit"]').textContent = "更新";
+  amountInput.focus();             // UX：讓你馬上可以改金額
 }
 
 // ---------- Storage ----------
@@ -188,7 +204,11 @@ function renderList() {
     const dateText = node.querySelector('[data-role="dateText"]');
     const noteText = node.querySelector('[data-role="noteText"]');
     const amountText = node.querySelector('[data-role="amountText"]');
+    const editBtn = node.querySelector('[data-role="editBtn"]');
     const deleteBtn = node.querySelector('[data-role="deleteBtn"]');
+    editBtn.classList.add("btn", "btn--ghost");
+    deleteBtn.classList.add("btn", "btn--danger");
+
 
     typeBadge.textContent = r.type === "income" ? "收入" : "支出";
     categoryText.textContent = CATEGORY_LABEL[r.category] || r.category;
@@ -199,7 +219,11 @@ function renderList() {
     const sign = r.type === "income" ? "+" : "-";
     amountText.textContent = `${sign}${formatMoney(r.amount)}`;
 
-    // 綁定刪除
+    // 綁定刪除 // 綁定編輯
+    editBtn.addEventListener("click", () => {
+      enterEditMode(r);
+    });
+
     deleteBtn.addEventListener("click", () => {
       deleteRecord(r.id);
     });
@@ -225,10 +249,40 @@ function addRecord({ date, type, category, amount, note }) {
   render();
 }
 
+function updateRecord(id, patch) {
+  const target = state.records.find((r) => r.id === id);
+  if (!target) return;
+
+  target.date = patch.date;
+  target.type = patch.type;
+  target.category = patch.category;
+  target.amount = patch.amount;
+  target.note = patch.note || "";
+
+  saveRecords(state.records);
+  render();
+}
+
 function deleteRecord(id) {
   state.records = state.records.filter((r) => r.id !== id);
   saveRecords(state.records);
   render();
+}
+
+function exitEditMode() {
+  state.editingId = null;
+
+  // UI：按鈕文字改回「新增」
+  form.querySelector('button[type="submit"]').textContent = "新增";
+
+  // UX：清空金額與備註、日期回今天（你也可選擇保留今天）
+  dateInput.value = todayISO();
+  amountInput.value = "";
+  noteInput.value = "";
+  typeInput.value = "expense";
+  categoryInput.value = "food";
+
+  amountInput.focus();
 }
 
 function clearAll() {
@@ -276,12 +330,19 @@ form.addEventListener("submit", (e) => {
     return;
   }
 
-  addRecord({ date, type, category, amount, note });
-
-  // UX：新增後只清空金額與備註，日期保留今天
-  amountInput.value = "";
-  noteInput.value = "";
-  amountInput.focus();
+  // ✅ 分流：編輯模式 or 新增模式
+  if (state.editingId) {
+    console.log("[UPDATE]", state.editingId);
+    updateRecord(state.editingId, { date, type, category, amount, note });
+    exitEditMode();
+  } else {
+    console.log("[ADD]");
+    addRecord({ date, type, category, amount, note });
+    // 你原本新增後 UX
+    amountInput.value = "";
+    noteInput.value = "";
+    amountInput.focus();
+  }
 });
 
 clearAllBtn.addEventListener("click", () => {
