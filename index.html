@@ -69,15 +69,24 @@
           <input type="text" id="noteInput" maxlength="30" placeholder="例如：午餐" />
         </label>
 
-        <button type="submit" class="btn">新增</button>
+        <!-- 表單區 -->
+        <div class="form-actions">
+          <button type="submit" class="btn" id="submitBtn">新增</button>
+          <button type="button" class="btn btn-secondary" id="cancelEditBtn" hidden>取消</button>
+        </div>        
       </form>
     </section>
 
     <section class="panel" aria-label="records">
       <div class="panel-head">
         <h2>紀錄</h2>
-        <button type="button" class="btn btn-ghost" id="clearAllBtn">清空全部</button>
+      
+        <div class="panel-actions">
+          <button type="button" class="btn" id="exportCsvBtn">匯出 CSV</button>
+          <button type="button" class="btn btn-danger" id="clearAllBtn">清空全部</button>
+        </div>
       </div>
+      
 
       <div class="filters" aria-label="filters">
         <label class="field">
@@ -121,7 +130,7 @@
       <ul id="recordList" class="list"></ul>
 
       <template id="recordItemTpl">
-        <li class="item">
+        <li class="item" data-id="">
           <div class="item-main">
             <div class="item-title">
               <span class="badge" data-role="typeBadge">支出</span>

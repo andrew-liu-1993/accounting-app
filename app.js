@@ -12,21 +12,20 @@ const typeInput = document.querySelector("#typeInput");
 const categoryInput = document.querySelector("#categoryInput");
 const amountInput = document.querySelector("#amountInput");
 const noteInput = document.querySelector("#noteInput");
-
 const sumIncomeEl = document.querySelector("#sumIncome");
 const sumExpenseEl = document.querySelector("#sumExpense");
 const sumBalanceEl = document.querySelector("#sumBalance");
-
 const recordList = document.querySelector("#recordList");
 const recordItemTpl = document.querySelector("#recordItemTpl");
-
 const clearAllBtn = document.querySelector("#clearAllBtn");
 const monthFilter = document.querySelector("#monthFilter");
 const typeFilter = document.querySelector("#typeFilter");
 const categoryFilter = document.querySelector("#categoryFilter");
 const qFilter = document.querySelector("#qFilter");
 const resetFilterBtn = document.querySelector("#resetFilterBtn");
-
+const exportCsvBtn = document.querySelector("#exportCsvBtn");
+const submitBtn = document.querySelector("#submitBtn");
+const cancelEditBtn = document.querySelector("#cancelEditBtn");
 
 // ---------- Config ----------
 const STORAGE_KEY = "accounting_records_v0";
@@ -95,11 +94,49 @@ function setFormValuesFromRecord(r) {
   noteInput.value = r.note || "";
 }
 
+function clearEditingHighlight() {
+  document.querySelectorAll(".item.is-editing").forEach((el) => {
+    el.classList.remove("is-editing");
+  });
+}
+
 function enterEditMode(r) {
-  state.editingId = r.id;          // ✅ 設定 editingId（進入編輯狀態）
-  setFormValuesFromRecord(r);      // ✅ 把資料填回表單
-  form.querySelector('button[type="submit"]').textContent = "更新";
-  amountInput.focus();             // UX：讓你馬上可以改金額
+  state.editingId = r.id;
+  setFormValuesFromRecord(r);
+
+  submitBtn.textContent = "更新";
+  cancelEditBtn.hidden = false;
+
+  clearEditingHighlight();
+  const row = document.querySelector(`.item[data-id="${r.id}"]`);
+  if (row) row.classList.add("is-editing");
+
+  amountInput.focus();
+}
+
+function escapeCSV(v) {
+  // CSV 需要處理逗號、雙引號、換行
+  const s = String(v ?? "");
+  const escaped = s.replace(/"/g, '""');
+  return /[",\n]/.test(escaped) ? `"${escaped}"` : escaped;
+}
+
+function recordsToCSV(records) {
+  const header = ["date", "type", "category", "amount", "note"];
+  const rows = records.map((r) => [
+    r.date,
+    r.type,
+    r.category,
+    r.amount,
+    r.note || "",
+  ]);
+
+  const lines = [
+    header.join(","),
+    ...rows.map((row) => row.map(escapeCSV).join(",")),
+  ];
+
+  return lines.join("\n");
 }
 
 // ---------- Storage ----------
@@ -198,6 +235,8 @@ function renderList() {
 
   for (const r of sorted) {
     const node = recordItemTpl.content.cloneNode(true);
+    const li = node.querySelector(".item");
+    li.dataset.id = r.id;
 
     const typeBadge = node.querySelector('[data-role="typeBadge"]');
     const categoryText = node.querySelector('[data-role="categoryText"]');
@@ -206,9 +245,9 @@ function renderList() {
     const amountText = node.querySelector('[data-role="amountText"]');
     const editBtn = node.querySelector('[data-role="editBtn"]');
     const deleteBtn = node.querySelector('[data-role="deleteBtn"]');
-    editBtn.classList.add("btn", "btn--ghost");
-    deleteBtn.classList.add("btn", "btn--danger");
 
+    editBtn.classList.add("btn");// 要實心紫色編輯就只加 btn
+    deleteBtn.classList.add("btn");
 
     typeBadge.textContent = r.type === "income" ? "收入" : "支出";
     categoryText.textContent = CATEGORY_LABEL[r.category] || r.category;
@@ -271,9 +310,10 @@ function deleteRecord(id) {
 
 function exitEditMode() {
   state.editingId = null;
+  clearEditingHighlight();
 
-  // UI：按鈕文字改回「新增」
-  form.querySelector('button[type="submit"]').textContent = "新增";
+  submitBtn.textContent = "新增";
+  cancelEditBtn.hidden = true;
 
   // UX：清空金額與備註、日期回今天（你也可選擇保留今天）
   dateInput.value = todayISO();
@@ -291,6 +331,20 @@ function clearAll() {
   render();
 }
 
+function downloadCSV(filename, csvText) {
+  const blob = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+
+  URL.revokeObjectURL(url);
+}
+
 // ---------- Events ----------
 function initDefaults() {
   dateInput.value = todayISO();
@@ -300,6 +354,12 @@ function initDefaults() {
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   state.filters.month = `${yyyy}-${mm}`;
   syncFilterUIFromState();
+
+  // ✅ 重要：刷新後一律回到「新增模式」
+  state.editingId = null;
+  clearEditingHighlight();
+  submitBtn.textContent = "新增";
+  cancelEditBtn.hidden = true;
 }
 
 
@@ -350,6 +410,11 @@ clearAllBtn.addEventListener("click", () => {
   if (!ok) return;
   clearAll();
 });
+
+cancelEditBtn.addEventListener("click", () => {
+  exitEditMode();
+});
+
 monthFilter.addEventListener("change", () => {
   state.filters.month = monthFilter.value;
   render();
@@ -374,6 +439,22 @@ resetFilterBtn.addEventListener("click", () => {
   state.filters = { month: "", type: "all", category: "all", q: "" };
   syncFilterUIFromState();
   render();
+});
+
+exportCsvBtn.addEventListener("click", () => {
+  const filtered = getFilteredRecords(); // ✅ 匯出「目前畫面上看到的結果」
+
+  if (filtered.length === 0) {
+    alert("目前沒有可匯出的紀錄（請先新增或調整篩選條件）");
+    return;
+  }
+
+  const csv = recordsToCSV(filtered);
+
+  const yyyyMm = state.filters.month || "all";
+  const filename = `accounting_${yyyyMm}.csv`;
+
+  downloadCSV(filename, csv);
 });
 
 
