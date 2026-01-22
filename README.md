@@ -36,6 +36,48 @@ A vanilla JavaScript accounting app built with **state-driven rendering** and **
 
 ---
 
+## 🔘 Button Hierarchy & UX Design
+
+This project applies a clear button hierarchy to guide user actions
+and reduce the risk of misoperation.
+
+### 1. Primary Action (Main CTA)
+Used for the most important action on the page.
+
+- Examples: `新增`, `更新`
+- Style: Solid primary color (purple)
+- Design intent:
+  - Draw immediate attention
+  - Only one primary action is visible at a time
+  - Represents the main user flow
+
+### 2. Secondary Action
+Used for supportive or frequently-used actions that should not compete
+with the primary action.
+
+- Examples: `匯出 CSV`
+- Style: Outline / ghost button using the same primary color
+- Design intent:
+  - Clearly available but visually lightweight
+  - Maintains consistency without stealing focus
+
+### 3. Destructive / Cancel Action
+Used for actions that interrupt the current flow or may cause data loss.
+
+- Examples: `清空全部`, `取消`
+- Style:
+  - Red for destructive actions
+  - Gray for cancel actions
+- Design intent:
+  - Provide strong visual warning
+  - Encourage users to pause and confirm their intention
+
+This hierarchy improves usability, prevents accidental operations,
+and reflects real-world product design principles commonly used in
+production applications.
+
+---
+
 ## 🛠 Tech Stack
 
 - HTML
