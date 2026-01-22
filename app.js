@@ -26,6 +26,9 @@ const resetFilterBtn = document.querySelector("#resetFilterBtn");
 const exportCsvBtn = document.querySelector("#exportCsvBtn");
 const submitBtn = document.querySelector("#submitBtn");
 const cancelEditBtn = document.querySelector("#cancelEditBtn");
+const clearConfirmBar = document.querySelector("#clearConfirmBar");
+const confirmClearBtn = document.querySelector("#confirmClearBtn");
+const cancelClearBtn = document.querySelector("#cancelClearBtn");
 
 // ---------- Config ----------
 const STORAGE_KEY = "accounting_records_v0";
@@ -331,6 +334,14 @@ function clearAll() {
   render();
 }
 
+function openClearConfirm() {
+  clearConfirmBar.hidden = false;
+}
+
+function closeClearConfirm() {
+  clearConfirmBar.hidden = true;
+}
+
 function downloadCSV(filename, csvText) {
   const blob = new Blob([csvText], { type: "text/csv;charset=utf-8;" });
   const url = URL.createObjectURL(blob);
@@ -406,9 +417,16 @@ form.addEventListener("submit", (e) => {
 });
 
 clearAllBtn.addEventListener("click", () => {
-  const ok = confirm("確定要清空全部紀錄嗎？此動作無法復原。");
-  if (!ok) return;
+  openClearConfirm();
+});
+
+confirmClearBtn.addEventListener("click", () => {
   clearAll();
+  closeClearConfirm();
+});
+
+cancelClearBtn.addEventListener("click", () => {
+  closeClearConfirm();
 });
 
 cancelEditBtn.addEventListener("click", () => {

@@ -79,6 +79,19 @@
 
     <section class="panel" aria-label="records">
       <div class="panel-head">
+        <!-- ✅ Danger confirm bar (hidden by default) -->
+      <div class="danger-bar" id="clearConfirmBar" hidden>
+        <div class="danger-bar__text">
+          <div class="danger-bar__title">即將清空全部紀錄</div>
+          <div class="danger-bar__desc">此動作無法復原，確定要繼續嗎？</div>
+      </div>
+
+      <div class="danger-bar__actions">
+        <button type="button" class="btn btn-danger" id="confirmClearBtn">確認清空</button>
+        <button type="button" class="btn btn-ghost" id="cancelClearBtn">取消</button>
+        </div>
+      </div>
+
         <h2>紀錄</h2>
       
         <div class="panel-actions">
