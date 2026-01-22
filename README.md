@@ -1,80 +1,87 @@
 # Accounting App (V0 → V1)
 
-A vanilla JavaScript accounting app built with **state-driven rendering** and **incremental feature design**.
+A **state-driven accounting web application** built with vanilla JavaScript.
 
-**Live Demo:** https://andrew-liu-1993.github.io/accounting-app/
+This project focuses on **practical front-end fundamentals and product-oriented
+design decisions**, including CRUD workflows, filter-synced summaries,
+destructive action handling, and UI consistency.
+It is designed to reflect **real-world product behavior**, not demo-only features.
+
+🔗 **Live Demo**  
+https://andrew-liu-1993.github.io/accounting-app/
 
 ---
 
 ## ✨ Features
 
-### V0 (MVP)
+### V0 — Core Functionality
 - Add income / expense records
 - Monthly summary (income / expense / balance)
-- Record list rendering from a single source of truth
-- Data persistence via localStorage
+- Record list rendered from a single source of truth
+- Data persistence via `localStorage`
 
-### V1 (Filters & Summary Sync)
+### V1 — Filtering & Summary Sync
 - Filter records by:
   - Month
   - Type (income / expense)
   - Category
   - Keyword (note / category)
-- Summary values update based on **filtered records**
+- Summary values update based on **currently filtered records**
 - Reset filters to default state
 
 ---
 
-## 🧠 Design Principles
+## 🧠 Architectural Approach
 
-- **Single Source of Truth**
-  - All records are stored in `state.records`
-- **State-driven Rendering**
-  - UI is fully derived from state (list and summary)
-- **Incremental Iteration**
-  - Features are added without breaking existing logic
+### Single Source of Truth
+All application data is managed in a centralized state (`state.records`).
+The UI is fully derived from state through explicit render functions.
+
+### State-Driven Rendering
+- Avoids hidden DOM state
+- Keeps list view and summary logic predictable
+- Simplifies future feature expansion
+
+### Incremental Feature Design
+Features are introduced iteratively without breaking existing behavior,
+mirroring real-world product development practices.
 
 ---
 
-## 🔘 Button Hierarchy & UX Design
+## 🎯 UX-Oriented Design Decisions
 
-This project applies a clear button hierarchy to guide user actions
-and reduce the risk of misoperation.
+### Explicit Edit Mode
+Editing is implemented as a dedicated mode rather than inline mutation:
+- Edit state is tracked explicitly
+- Form behavior reflects current mode (Add / Update / Cancel)
+- Clear visual distinction for records under editing
 
-### 1. Primary Action (Main CTA)
-Used for the most important action on the page.
+This reduces accidental overwrites and aligns with common CRUD product flows.
 
-- Examples: `新增`, `更新`
-- Style: Solid primary color (purple)
-- Design intent:
-  - Draw immediate attention
-  - Only one primary action is visible at a time
-  - Represents the main user flow
+### Filter-Aware Summary Logic
+Monthly summary values are calculated from **filtered data**, not raw records,
+ensuring consistency between what users see and what is summarized.
 
-### 2. Secondary Action
-Used for supportive or frequently-used actions that should not compete
-with the primary action.
+### Destructive Action Handling
+Destructive actions do not rely on native `alert()` dialogs.
+Instead, the app uses an **in-app confirmation UI** that:
+- Preserves context without blocking the interface
+- Requires explicit confirmation
+- Allows safe cancellation
 
-- Examples: `匯出 CSV`
-- Style: Outline / ghost button using the same primary color
-- Design intent:
-  - Clearly available but visually lightweight
-  - Maintains consistency without stealing focus
+This pattern reflects modern production UX standards.
 
-### 3. Destructive / Cancel Action
-Used for actions that interrupt the current flow or may cause data loss.
+---
 
-- Examples: `清空全部`, `取消`
-- Style:
-  - Red for destructive actions
-  - Gray for cancel actions
-- Design intent:
-  - Provide strong visual warning
-  - Encourage users to pause and confirm their intention
+## 🎨 UI Consistency & Design Foundations
 
-This hierarchy improves usability, prevents accidental operations,
-and reflects real-world product design principles commonly used in
-production applications.
+A lightweight design system is applied to maintain consistency and clarity:
+- Clear button hierarchy (primary / secondary / destructive / neutral)
+- Strict color semantics for action intent
+- Consistent spacing rules
+- Right-aligned numeric values for financial readability
+
+These foundations ensure that feature growth does not lead to UI inconsistency.
 
 ---
 
@@ -83,23 +90,30 @@ production applications.
 - HTML
 - CSS
 - Vanilla JavaScript
-- localStorage
-- Git / GitHub (feature branches & PR workflow)
+- `localStorage`
+- Git / GitHub
 
 ---
 
-## 🚀 How to Run Locally
+## 🚀 Run Locally
 
-1. Clone the repository
-   ```bash
-   git clone https://github.com/andrew-liu-1993/accounting-app.git
-
+```bash
+git clone https://github.com/andrew-liu-1993/accounting-app.git
+```
 ---
 
-## 📌 Future Improvements
-
-- Edit existing records
-- Export data as CSV
-- Monthly charts and trends
+📌 Future Improvements
+- Export records as CSV
+- Monthly charts and trend visualization
 - Category management
-- Refactor to modular structure
+- Codebase modularization
+
+👤 Target Roles
+This project is intended to demonstrate fundamentals relevant to:
+- Junior Front-End Engineer
+- Entry to Mid-Level Front-End Engineer
+- Product-Oriented Software Engineer
+
+The emphasis is on state management, UI predictability, and UX-aware
+engineering decisions, rather than framework-specific implementations.
+
